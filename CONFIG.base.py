@@ -14,7 +14,8 @@ MONGO_PORT=27333 #  Probably best to use the same port as you use on ix
 ### The following are for a Mongo user you create for accessing your
 ### memos database.  It should not be the same as your database administrator
 ### account. 
-MONGO_PW = "iremember"  
-MONGO_USER = "memo"
-MONGO_URL = "mongodb://{}:{}@localhost:{}/memos".format(MONGO_USER,MONGO_PW,MONGO_PORT)
+MONGO_PW = "dvorak"  
+MONGO_USER = "person"
+
+MONGO_URL = "mongodb://{}:{}@ix.cs.uoregon.edu:{}/memos".format(MONGO_USER,MONGO_PW,MONGO_PORT)
 
