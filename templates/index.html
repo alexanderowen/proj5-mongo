@@ -6,21 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Javascript:  JQuery from a content distribution network (CDN) -->
-  <script
-     src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
-  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
   <!-- Bootstrap includes javascript and css  (must follow jquery) -->
-  <link rel="stylesheet"
-   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-   <script
-    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
-</script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
-   <!-- Our own style sheet -->
-   <link rel="stylesheet" href="/static/css/memos.css" />
+  <!-- Our own style sheet -->
+  <link rel="stylesheet" href="/static/css/memos.css" />
 
-
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
 <div class="container">
@@ -40,23 +35,68 @@
 
 {% if session.memos %}
     {% for memo in session.memos %}
-  <div class="memo">
-  <div class="row">
-  <div class="col-md-2">
-    {{ memo.date | humanize }}
-  </div>
-  <div class="col-md-10">
-    {{ memo.text }}
-  </div>
-  </div> <!-- row -->
-  </div> <!-- memo -->
-  {% endfor %}
+  		<div class="memo">
+
+  		<div class="row">
+  		<div class="col-md-4">
+  			<label>
+  		    	<input type="checkbox" id="{{ loop.index0 }}"> {{ memo.date | humanize }}
+  			</label>    		
+  		</div>
+  		</div>
+
+		<div class="row">  		
+  		<div class="col-md-6 col-md-offset-2">
+    		{{ memo.text }}
+  		</div>
+  		</div> <!-- row -->
+  		
+  		</div> <!-- memo -->
+  		<br>
+  	{% endfor %}
 {% else %}
-  <p>No memos for you. </p>  
+  <p>There are no memos.</p>  
 {% endif %}
 
- 
+<br>
+<div class="form-group">
+  <div class="col-md-10">
+    <div class="button">
+      <label>
+        <button type="button" class="btn btn-default" id="createButton">Create Memo</button>          
+      </label>
+      <label>
+        <button type="button" class="btn btn-default" id="deleteButton">Delete Selected Memos</button>          
+      </label>
+    </div>
+  </div>
+</div>
 
 </div> <!-- container -->
+
+<script>
+$("#createButton").on("click", function() {
+	window.location.href = "create";
+});
+
+$("#deleteButton").on("click", function() {
+	var checked = $("input:checked");
+	var ids = "";
+	for (var i = 0; i < checked.length; i++) {
+		ids += checked[i].id;
+	}
+	
+	$.getJSON("/_remove_memo", 
+		{indices : ids},
+		function(data) {
+			var success = data.result.success;
+			if (!success) {
+				alert("Failed to delete record(s)")
+			}
+			window.location.href = "index";
+		}
+	);
+});
+</script>
 </body>
 </html>

@@ -1,27 +1,29 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html> <head>
-<title>Memos</title>
+<title>Create Memo</title>
 
   <!-- 'viewport' is used by bootstrap to respond to device size -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Javascript:  JQuery from a content distribution network (CDN) -->
-  <script
-     src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js">
-  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
   <!-- Bootstrap includes javascript and css  (must follow jquery) -->
-  <link rel="stylesheet"
-   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-   <script
-    src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
-</script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    
+  <!-- Stylesheet for Datepicker -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <!-- Jquery UI: for Datepicker-->
+  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
    <!-- Our own style sheet -->
-   <link rel="stylesheet" href="/static/css/memos.css" />
-
-
+   <link rel="stylesheet" href="/static/css/memos.css" /></script>
+  
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
+
+
 <body>
 <div class="container">
 <h1>Create a Memo</h1>
@@ -37,18 +39,79 @@
   {% endif %}
 {% endwith %}
 
-<form method="PUT" action="_create">
-<div class="row">
-    <div class="col-md-2">
-    <input type="text" class="form-control"
-     name="Date" value=""/>
+<!--
+<p><input type="text" id="start_date" placeholder="MM/DD/YYYY"></p>
+-->
+
+<form class="form-horizontal">
+<div class="form-group">
+  <div class="col-md-2">
+    <input type="text" class="form-control" id="date" value="" placeholder="MM/DD/YYYY"/>
   </div>
+</div>
+
+<div class="form-group">
   <div class="col-md-10">
-    <input type="text" class="form-control"
-      name="Memo" value="Memo" />
+    <textarea type="text" class="form-control" rows="8" id="memo" value="" placeholder="Enter text here"></textarea>
+  </div>  
+</div>
+
+
+<div class="form-group">
+  <div class="col-md-10">
+    <div class="button">
+      <label>
+        <button type="button" class="btn btn-default" id="save">Save</button>          
+      </label>
+      <label>
+        <button type="button" class="btn btn-default" id="cancel">Cancel</button>
+      </label>
+    </div>
   </div>
- </div>
+</div>
+
 </form>
-</div> 
+
+</div> <!-- end container--> 
+
+<script>
+  // Data picker module/widget. Allows for easy calendar selection.
+  $(function() {
+    $("#date").datepicker();
+  });
+</script>
+
+<script>
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+$("#save").on("click", function () {
+	var user_memo = $("#memo").val();
+	var user_date = $("#date").val();
+	console.log(user_date);
+	
+	if (user_memo == "" || user_date == "") {
+		alert("Memo field or date field cannot be blank. Please enter a memo.");
+		return;
+	}
+	
+	$.getJSON('/_create_memo',
+		{ memo : user_memo,
+		  date : user_date},
+		function(data) {
+			var success = data.result.success;
+			if (success) {
+				window.location.href = "index";
+			}
+			else {
+				alert("Memo DB update unsuccessful.")
+			}
+		});
+});
+
+$("#cancel").on("click", function () {
+	window.location.href = "index";
+});
+
+</script>
+
 </body>
 </html>
