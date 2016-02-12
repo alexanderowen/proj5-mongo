@@ -7,4 +7,5 @@ http://ix.cs.uoregon.edu:6447
 Simple app of dated memos kept in MongoDB database    
 
 In the spirit of energy efficiency from proj5-karaoke, the webpage is in black.  
--'memo_utils.py' contains the main body of alterations from the source repo.  
+'memo_utils.py' contains the main body of alterations from the source repo.  
+Other major changes can be found in and flask_main.py templates/create.html, templates/index.html
