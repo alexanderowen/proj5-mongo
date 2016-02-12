@@ -88,6 +88,7 @@ $("#save").on("click", function () {
 	var user_date = $("#date").val();
 	console.log(user_date);
 	
+	// Check for valid input
 	if (user_memo == "" || user_date == "") {
 		alert("Memo field or date field cannot be blank. Please enter a memo.");
 		return;

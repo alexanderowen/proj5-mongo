@@ -86,7 +86,7 @@ $("#deleteButton").on("click", function() {
 		ids += checked[i].id;
 	}
 	
-	$.getJSON("/_remove_memo", 
+	$.getJSON("/_remove_memos", 
 		{indices : ids},
 		function(data) {
 			var success = data.result.success;

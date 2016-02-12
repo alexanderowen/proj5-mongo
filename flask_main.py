@@ -32,8 +32,10 @@ from pymongo import MongoClient
 #ObjectId for mongo records
 from bson.objectid import ObjectId
 
+# Utility module to handle database memos
 from memo_utils import insert_memo
-from memo_utils import delete_memos
+from memo_utils import delete_memo
+from memo_utils import humanize_date
 
 # For Favicon loading
 import os
@@ -44,7 +46,6 @@ import os
 import CONFIG
 
 app = flask.Flask(__name__)
-
 
 try: 
     dbclient = MongoClient(CONFIG.MONGO_URL)
@@ -100,14 +101,19 @@ def create_memo():
 	date = request.args.get("date", type=str)
 	
 	success = insert_memo(memo, date, collection)	
-	return jsonify(result={"success": success})
+	return jsonify(result={"success": bool(success)})
 	
-@app.route("/_remove_memo")
-def remove_memo():
+@app.route("/_remove_memos")
+def remove_memos():
 	indices = request.args.get("indices", type=str)
+	success = True
 	
-	success = delete_memos(indices, flask.session['memos'], collection)		
-	return jsonify(result={"success": success})
+	for i in indices:
+		record = flask.session['memos'][int(i)]
+		id = ObjectId(record['_id'])
+		success = delete_memo(id, collection)
+		
+	return jsonify(result={"success": bool(success)})
 
 
 #################
@@ -136,17 +142,7 @@ def humanize_arrow_date( date ):
     Arrow will try to humanize down to the minute, so we
     need to catch 'today' as a special case. 
     """
-    try:
-        then = arrow.get(date)
-        now = arrow.utcnow().to('local')
-        if then.date() == now.date():
-            human = "Today"
-        else: 
-            human = then.humanize(now)
-            if human == "in a day":
-                human = "Tomorrow"
-    except: 
-        human = date
+    human = humanize_date(date)
     return human
 
 
